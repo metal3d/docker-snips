@@ -1,6 +1,6 @@
 [snips-common]
 # bus = "mqtt"
-# mqtt = "localhost:1883"
+mqtt = "localhost:@PORT@"
 # audio = ["+@mqtt"]
 # assistant = "/usr/share/snips/assistant"
 # user_dir = "/var/lib/snips"

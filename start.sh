@@ -29,33 +29,101 @@ function load_pa_module(){
 }
 
 function _start_snips_pulse() {
+
+    local assistant=$1
+    local skills=$2
+    local dev=$3
+    local command=$4
+
+    if [ "$skills" != "" ]; then
+        skills=$(realpath $skills)
+        bn=$(basename $skills)
+        bn=$(echo "$bn" | sed 's/^snips-//')
+        skills="-v $skills:/home/user/deploy/$bn$SEOPT"
+    fi
+
+    if [ "$dev" != "" ]; then
+        dev=$(realpath $dev)
+        dev="-v $dev:/home/user/dev$SEOPT"
+    fi
+
     # load pulseaudio socket
     load_pa_module
 
     # start docker container
     docker run --rm -it \
         --name snips \
-        -v $1:/usr/share/snips/assistant$SEOPT \
+        -v $assistant:/usr/share/snips/assistant$SEOPT \
         -v /tmp/pulse.sock:/tmp/pulse.sock \
+        $skills $dev \
         -e USERID=$(id -u) \
         -e GROUPID=$(id -g) $PRIV \
-        metal3d/snips
+        metal3d/snips $command
 
     # stop unix socket
     unload_pa_module
-
 }
 
-if [ "$1" == "" ]; then
+
+function usage() {
+cat << EOF
+$(basename $0) [OPTS] <assistant_dir>
+
+<assistant_dir> must be a downloaded assistant from https://snip.ia dashboard, it contains assistant.json file.
+
+Optional options:
+
+-s|--skills     Path to skills to install and launch
+-d|--devel      Path to your local skill your are developping
+                This allows you to start your setup environement and skill script manually.
+                Your development directory will reside in /home/user/dev directory.
+-h|--help       This help.
+
+EOF
+}
+
+
+s=""
+d=""
+p=""
+command=""
+
+
+
+OPTS=`getopt -o hd:s: --long help,devel:,skills: -n 'parse-options' -- "$@"`
+eval set -- "$OPTS"
+
+while true; do
+case $1 in
+    -h|--help)
+        usage
+        exit 0
+        ;;
+    -d|--devel)
+        d=$2; shift; shift;
+        ;;
+    -s|--skills)
+        s=$2; shift; shift;
+        ;;
+    --)
+        shift; break
+        ;;
+esac
+done
+
+p=$1
+command=$2
+
+if [ "$p" == "" ]; then
     echo "$(basename $0) /path/to/you/assistant_dir"
     exit 1
 fi
 
 
-RP=$(realpath $1)
+RP=$(realpath $p)
 
 if [ ! -d $RP ]; then
-    echo "$1 not found..."
+    echo "$p not found..."
     exit 1
 fi
 
@@ -64,5 +132,14 @@ if [ ! -f $RP/assistant.json ]; then
     exit 1
 fi
 
-_start_snips_pulse $RP 
+
+for i in "$s" "$d"; do
+    if [ "$i" != "" ] && [ ! -d $i ]; then
+        echo "$i not found"
+        exit 1
+    fi
+done
+
+
+_start_snips_pulse "$RP" "$s" "$d" "$command"
 

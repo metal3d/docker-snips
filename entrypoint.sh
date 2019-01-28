@@ -7,7 +7,7 @@ usermod -g $GROUPID -u $USERID user
 if [ -d /home/user/deploy ] ; then
     cp -r /home/user/deploy/* /var/lib/snips/skills/
 
-    for d in $(find /var/lib/snips/skills -maxdeph 1 -type d); do
+    for d in $(find /var/lib/snips/skills -maxdepth 1 -type d); do
         pushd $d
             echo "Deploying in $d"
             [ -f setup.sh ] && bash setup.sh
@@ -15,31 +15,21 @@ if [ -d /home/user/deploy ] ; then
     done
 fi
 
-mosquitto -d
+# start mosquitto at a certain port
+mosquitto -d -p $PORT 2>&1 1>/dev/null
 
-# wait ${PIDS[*]}
-if [ "$@" != "" ]; then
-    # allow starting a command line
-    exec su -l user -c "
-    snips-asr &
-    snips-dialogue &
-    snips-nlu &
-    snips-audio-server &
-    snips-hotword &
-    snips-tts &
-    $@"
-
-else
-    # CTRL + C stops the container as
-    # the last service is stopped
-    exec su -l user -c "
-    snips-asr &
-    snips-dialogue &
-    snips-nlu &
-    snips-audio-server &
-    snips-hotword &
-    snips-tts"
+# start supervisord to launch snips services
+supervisord 2>&1 1>/dev/null 
+if [ $? != 0 ]; then
+    echo "Supervisord failed to start"
+    exit 1
 fi
 
 
+if [ "$1" == "" ]; then
+    tail -f /var/log/supervisor/snips*.log 
+    exit 0
+fi
+
+exec $@
 

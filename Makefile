@@ -1,6 +1,6 @@
-.PHONY: pulse alsa
+.PHONY: pulse
 
-all: pulse alsa
+all: pulse
 
 pulse:
 	docker build -t metal3d/snips . 
