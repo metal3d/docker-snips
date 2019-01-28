@@ -12,6 +12,14 @@ Afterward, you can "download" your assistant following the "deploy assistant" li
 
 ## Launching Snips
 
+There is a "`start.sh`" script that helps to start the container. It automatically load pulseaudio module, start the container and stop module if needed.
+
+```bash
+./start.sh /path/to/your/assistant
+```
+
+## If you want to launch it manually
+
 For several reason, we need to have the same user id and groupe id inside the container than yours on host machine. So, you will need to use:
 
 - `-e USERID=$(id -u)`
@@ -31,7 +39,6 @@ Then, you can share the socket to container by mounting `/tmp/pulse.sock` as a v
 
 ```bash
 docker run --rm -it \
-    -e PULSE_COOKIE=/tmp/pulse.cookie -e PULE_SERVER=unix:/tmp/pulse.sock \
     -v /path/to/your/assistant:/usr/share/snips/assistant:ro \
     -e USERID=$(id -u) -e GROUPID=$(id -g) \
     -v /tmp/pulse.sock:/tmp/pulse.sock \
