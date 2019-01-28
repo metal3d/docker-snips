@@ -18,6 +18,47 @@ There is a "`start.sh`" script that helps to start the container. It automatical
 ./start.sh /path/to/your/assistant
 ```
 
+Several options are now added, see the help options `-h`:
+
+```
+
+start.sh [OPTS] <assistant_dir>
+
+<assistant_dir> must be a downloaded assistant from https://snip.ia dashboard, it contains assistant.json file.
+
+Optional options:
+
+-s|--skills     Path to skills to install and launch
+-d|--devel      Path to your local skill your are developping
+                This allows you to start your setup environement and skill script manually.
+                Your development directory will reside in /home/user/dev directory.
+-h|--help       This help.
+
+```
+
+If you provide a skill directory, so the container will try to install the skills inside the `/var/lib/snips/skills directory`.
+
+If you provide a dev directory, it will be mounted inside `/home/user/dev`.
+
+**VERY IMPORTANT** : After you launched the container, if you want to start development script, **change user to "user"** `su -l user`, if you don't do that, generated files (as venv or .pyc files) will be owned by "root" - I'm trying to avoid that.
+
+To launch a development environement:
+
+```bash
+./start.sh -d ~/Project/snips/myproject ~/Project/snips/assistant
+# snips logs will appear...
+
+# in another terminal
+$ docker exec -it snips bash
+(in container) $ su -l user
+(in container) $ cd dev
+# remove venv if you want to restart setup, then
+(in container) $ ./setup.sh
+(in container) $ source venv/bin/activate
+(in container) (venv) $ python your_action.py
+```
+
+
 ## If you want to launch it manually
 
 For several reason, we need to have the same user id and groupe id inside the container than yours on host machine. So, you will need to use:
@@ -61,6 +102,7 @@ Anyway, you can manually launch setup and skills in another directory to develop
 ```bash
 $ docker run --rm -it --name snips ... -v $PWD/myskill:/home/user/myskill
 $ docker exec -it snips bash
+ (in snips container) $ su -l user
  (in snips container) $ cd myskill
  (in snips container) $ ./setup
  (in snips container) $ source venv/bin/activate
