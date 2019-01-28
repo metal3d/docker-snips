@@ -56,6 +56,7 @@ function _start_snips_pulse() {
         -v $assistant:/usr/share/snips/assistant$SEOPT \
         -v /tmp/pulse.sock:/tmp/pulse.sock \
         $skills $dev \
+        --user $(id -u):$(id -g) \
         -e USERID=$(id -u) \
         -e GROUPID=$(id -g) $PRIV \
         metal3d/snips $command

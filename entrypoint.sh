@@ -1,7 +1,6 @@
 #!/bin/bash
 
-groupmod -g $GROUPID user
-usermod -g $GROUPID -u $USERID user
+eval $(fixuid -q)
 
 # deploy given skills
 if [ -d /home/user/deploy ] ; then
