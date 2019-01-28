@@ -68,13 +68,15 @@ function _start_snips_pulse() {
 
 function usage() {
 cat << EOF
-$(basename $0) [OPTS] <assistant_dir>
+$(basename $0) [OPTS] <assistant_dir> [command]
 
 <assistant_dir> must be a downloaded assistant from https://snip.ia dashboard, it contains assistant.json file.
+[command] is a command to launch at startup, if no command is provided, the container will "tail" log files from
+snips services.
 
 Optional options:
 
--s|--skills     Path to skills to install and launch
+-s|--skills     Path to skills to install (not launched, work in progress)
 -d|--devel      Path to your local skill your are developping
                 This allows you to start your setup environement and skill script manually.
                 Your development directory will reside in /home/user/dev directory.
