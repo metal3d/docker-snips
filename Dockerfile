@@ -31,6 +31,8 @@ RUN set -xe; \
     # echo "default-sample-rate = 44100" >> /etc/pulse/daemon.conf; \
     usermod -g pulse-access _snips; 
 
+ADD reloader.py /usr/local/bin/reloader
+RUN chmod a+x /usr/local/bin/reloader
 
 # FIXUID - My god... What a tool...
 RUN USER=user && \
