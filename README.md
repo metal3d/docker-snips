@@ -6,6 +6,8 @@ This project is inspired from the great work of [dYalib](https://github.com/dYal
 
 This image uses `fixuid` https://github.com/boxboat/fixuid that allow us to bind local host user id to the container user ID.
 
+And there is a "reloader" tool to auto-restart your development skills while you're writing code. See below.
+
 ## Prepare an assistant
 
 First, go to https://snips.ai website and subscribe or login. Create an assistant and some intents.
@@ -77,6 +79,17 @@ $ docker exec -it snips bash
 (in container) $ source venv/bin/activate
 (in container) (venv) $ python your_action.py
 ```
+
+## Auto reload while you're developing
+
+There is a "reloader" program that checks if files are modified and restart the command that you want. It is very nice to not have to manually restart your development script while you're developing:
+
+```bash
+(in container) $ reloader python your_action.py
+```
+
+It checks each second if the file is modified, and terminate/kill the process to relaunch it. Note that this is a simple tool that can crash sometimes (I didn't have crash by my side, but if you get one, please report bug).
+
 
 
 # If you want to launch it manually

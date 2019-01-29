@@ -9,6 +9,7 @@ FILTERS = ['.swp']
 
 
 def get_mtime(directory):
+    """ Return a generator with all files modified time """
     def _yield():
         for dirname, _, files in os.walk('.'):
             for fname in files:
@@ -25,6 +26,10 @@ def get_mtime(directory):
 
 
 def launch(command):
+    """ Launch a command.
+
+    Returns the process object to be able to terminate it.
+    """
     command = ' '.join(command)
     process = subprocess.Popen(
             command,
@@ -36,10 +41,12 @@ def launch(command):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("You must provide a command")
+        print('You must provide a command')
+        print('Exemple: ' + os.path.basename(sys.argv[0]) + ' <command>')
         sys.exit(1)
 
     try:
+        print('Launching your command, CTRL+C to stop')
         process = launch(sys.argv[1:])
         mtime = max(get_mtime('.'))
         while True:
