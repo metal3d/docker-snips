@@ -1,8 +1,8 @@
 FROM debian:stretch-slim
 
 RUN set -xe; \
-    apt update; \
-    apt install -y gnupg2 dirmngr apt-transport-https; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg2 dirmngr apt-transport-https; \
     sed -i "s/ main/ main non-free/g" /etc/apt/sources.list; \
     echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list; \
     : "Loop until it works... "; \
@@ -11,11 +11,12 @@ RUN set -xe; \
         apt-key adv --keyserver pool.sks-keyservers.net --recv-keys F727C778CCB0A455 && break || sleep 1; \
         COUNT=$((COUNT+1)) && [ "$COUNT" -gt 10 ] && exit 1; \
     done; \
-    apt update; \
-    apt install -y pulseaudio snips-platform-voice snips-skill-server curl unzip git python3 python3-venv python3-pip \
-        python python-virtualenv python-pip \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        pulseaudio snips-platform-voice snips-skill-server curl unzip git python3-dev python3-venv python3-pip \
+        python-dev python-virtualenv python-pip \
         supervisor; \
-    apt clean
+    apt-get clean
 
 ENV PULSE_SERVER "unix:/tmp/pulse.sock"
 ENV PULSE_COOKIE "/tmp/pulse.cookie"
@@ -32,7 +33,6 @@ RUN set -xe; \
     usermod -g pulse-access _snips; 
 
 ADD reloader.py /usr/local/bin/reloader
-RUN chmod a+x /usr/local/bin/reloader
 
 # FIXUID - My god... What a tool...
 RUN USER=user && \
