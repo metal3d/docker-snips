@@ -30,7 +30,8 @@ RUN set -xe; \
     echo "daemon-binary = /bin/true" >> /etc/pulse/client.conf; \
     echo "enable-shm = false" >> /etc/pulse/client.conf; \
     # echo "default-sample-rate = 44100" >> /etc/pulse/daemon.conf; \
-    usermod -g pulse-access _snips; 
+    usermod -g pulse-access _snips; \
+    usermod -g _snips user
 
 ADD reloader.py /usr/local/bin/reloader
 
@@ -41,10 +42,12 @@ RUN USER=user && \
     chown root:root /usr/local/bin/fixuid && \
     chmod 4755 /usr/local/bin/fixuid && \
     mkdir -p /etc/fixuid && \
-    printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
+    printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml; \
+    echo "paths:" >> /etc/fixuid/config.yml; \
+    echo "  - /var/lib/snips" >> /etc/fixuid/config.yml;
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
-RUN chown -R user:user /var/lib/snips/skills /var/log/supervisor*
+RUN mkdir -p /var/lib/snips && chown -R user:user /var/lib/snips/skills /var/log/supervisor*
 
 ADD ./snips.conf /etc/supervisor/conf.d/snips.conf
 ADD snips.toml /etc/snips.toml
