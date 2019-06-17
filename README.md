@@ -23,13 +23,28 @@ There is a "`start.sh`" script that helps to start the container. It automatical
 
 # examples
 ## start snips and open a bash terminal
-./start ../assistant bash
+./start.sh ../assistant bash
 
 ## start snips without a terminal
-./start ../assitant
+./start.sh ../assitant
 
 ## start snips with a development dir from local directory
-./start ../assistant -d ./my_skill
+## skill is not launched, you can got to the container and launch the
+## skill - for example
+## 1 - start container
+./start.sh ../assistant -d ./my_skill
+
+## 2- then... install requirements and launch script
+docker exec -it snips bash
+./setup.sh
+source venv/bin/activate
+python3 your-app.py
+
+## To start you skill as Snips will do it later:
+./start.sh ../assistant -s ./my_skill
+
+## => container starts, install skill and launch snips services + snips-skill-server
+
 ```
 
 Several others options can help, see the help options `-h`:
@@ -44,7 +59,7 @@ snips services.
 
 Optional options:
 
--s|--skills     Path to skills to install (not launched, work in progress)
+-s|--skills     Path to skills to install - that will launch snips-skill-server after having deploy the skill
 -d|--devel      Path to your local skill your are developping
                 This allows you to start your setup environement and skill script manually.
                 Your development directory will reside in /home/user/dev directory.
@@ -94,14 +109,13 @@ It checks each second if the file is modified, and terminate/kill the process to
 
 # If you want to launch it manually
 
-For several reason, we need to have the same user id and group id inside the container than yours on host machine. So, you will need to use:
+For several reasonis, we need to have the same user id and group id inside the container than yours on host machine. So, you will need to use:
 
 ```
 --user $(id -u):$(id -g)
 # or direct id usage
 --user 1000:1000
 ```
-
 
 You need to share you host pulseaudio server with container. In a terminal:
 
@@ -121,7 +135,7 @@ docker run --rm -it \
     metal3d/snips
 ```
 
-It could take a while before pulseaudio becomes available in certain case. If snips doesn't hear your hotword ("hey snips !"), check in audio configuration in the "applications" tab if snips-audio-server appears.
+It could take a while before pulseaudio becomes available in certain cases. If snips doesn't hear your hotword ("hey snips !"), check in audio configuration in the "applications" tab if snips-audio-server appears.
 
 When you want to unload the pulseaudio socket, use the given id while you loaded the module and use:
 ```

@@ -76,7 +76,7 @@ snips services.
 
 Optional options:
 
--s|--skills     Path to skills to install (not launched, work in progress)
+-s|--skills     Path to skills to install - that will launch snips-skill-server after having deploy the skill
 -d|--devel      Path to your local skill your are developping
                 This allows you to start your setup environement and skill script manually.
                 Your development directory will reside in /home/user/dev directory.
