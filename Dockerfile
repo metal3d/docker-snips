@@ -54,6 +54,6 @@ RUN sed -i "s/@PORT@/${PORT}/" /etc/snips.toml
 ADD entrypoint.sh /entrypoint.sh
 
 USER 1000:1000
-WORKDIR /home/user
+WORKDIR /home/user/dev
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
