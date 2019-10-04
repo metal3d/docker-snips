@@ -1,5 +1,8 @@
 FROM debian:stretch-slim
 
+LABEL maintainer="Patrice Ferlet <metal3d@gmail.com>" \
+      snips.version="1.3.0 (0.64.0)"
+
 RUN set -xe; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg2 dirmngr apt-transport-https; \
