@@ -1,3 +1,6 @@
+[![](https://images.microbadger.com/badges/version/metal3d/snips.svg)](https://microbadger.com/images/metal3d/snips "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/metal3d/snips.svg)](https://microbadger.com/images/metal3d/snips "Get your own image badge on microbadger.com")
+
 # Using Snips with sound on Docker
 
 This project provides scripts and Dockerfiles to be able to launch [Snips](https://snips.ai/) on a Docker environment **without the need of satelites sound input** - so you will be able to launch Snips assistant on any Linux distribution.
